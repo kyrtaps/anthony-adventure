@@ -2,9 +2,9 @@
 // GET  → returns top-10 global leaderboard
 // POST → upserts a score (best time per name), returns updated board
 //
-// Backed by Vercel KV (Upstash Redis REST).
-// Needs env vars:  KV_REST_API_URL  and  KV_REST_API_TOKEN
-// — these are added automatically when you connect a Vercel KV store to the project.
+// Backed by Upstash Redis (Vercel Marketplace → Upstash → Redis).
+// Env vars injected automatically after connecting the store to this project:
+//   UPSTASH_REDIS_REST_URL   and   UPSTASH_REDIS_REST_TOKEN
 
 const KEY = 'anthony_scores';
 
@@ -32,8 +32,9 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
-  const base  = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
+  // Support both Upstash marketplace vars and legacy KV vars
+  const base  = process.env.UPSTASH_REDIS_REST_URL  || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 
   // KV not configured (local dev without env vars) — return empty list
   if (!base || !token) {
