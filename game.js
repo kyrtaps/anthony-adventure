@@ -347,123 +347,30 @@ function drawPlayer(){
   const{x,y,w,h,dir,atkTimer,invTimer,state}=player;
   const sx=x-camX;
   if(invTimer>0&&Math.floor(invTimer/5)%2===0) return;
-  const tagging=!!(player.nearWall&&player.tagTimer>0);
-  const lo=state==='run'&&!tagging?Math.sin(Date.now()*.016)*5:0;
-
-  // ── Red skateboard (horizontal under feet while riding) ────────────────────
-  if(!tagging){
-    const bx=sx-10, by=y+h-3, bw=w+20, bh=9;
-    // deck
-    ctx.fillStyle='#c0392b'; ctx.fillRect(bx+5,by,bw-10,bh);
-    // nose & tail (rounded kicks)
-    ctx.fillStyle='#922b21'; ctx.fillRect(bx,by+3,8,bh-3); ctx.fillRect(bx+bw-8,by+3,8,bh-3);
-    // top stripe
-    ctx.fillStyle='#e74c3c'; ctx.fillRect(bx+5,by,bw-10,3);
-    // grip-tape texture
-    ctx.fillStyle='rgba(0,0,0,0.22)'; ctx.fillRect(bx+5,by,bw-10,4);
-    // trucks (grey axle bars)
-    ctx.fillStyle='#999';
-    ctx.fillRect(bx+8,by+bh,13,3); ctx.fillRect(bx+bw-21,by+bh,13,3);
-    // 4 wheels
-    ctx.fillStyle='#1a1a1a';
-    for(const wx of [bx+10,bx+17,bx+bw-18,bx+bw-11]){
-      ctx.beginPath(); ctx.arc(wx,by+bh+5,5,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#555'; ctx.beginPath(); ctx.arc(wx,by+bh+5,2,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#1a1a1a';
-    }
-  }
-
-  _shadow(sx+w/2,22);
-
-  // ── Legs — blue jeans ──────────────────────────────────────────────────────
-  ctx.fillStyle='#1e4fa8';
-  ctx.fillRect(sx+4,    y+h*.61-lo, 11, h*.39+lo);
-  ctx.fillRect(sx+w-15, y+h*.61+lo, 11, Math.max(4,h*.39-lo));
-  // highlight seam
-  ctx.fillStyle='#2d65cc';
-  ctx.fillRect(sx+6,    y+h*.65, 4, h*.28);
-  ctx.fillRect(sx+w-13, y+h*.65, 4, h*.28);
-  // white sneakers
-  ctx.fillStyle='#eeeeee';
-  ctx.fillRect(sx+2,    y+h-8, 14, 8); ctx.fillRect(sx+w-16,y+h-8,14,8);
-  ctx.fillStyle='#cccccc'; // grey sole
-  ctx.fillRect(sx+2,    y+h-4, 14, 4); ctx.fillRect(sx+w-16,y+h-4,14,4);
-  ctx.fillStyle='#e74c3c'; // red sole stripe
-  ctx.fillRect(sx+2,    y+h-5, 14, 1); ctx.fillRect(sx+w-16,y+h-5,14,1);
-
-  // ── Torso — white t-shirt ──────────────────────────────────────────────────
-  ctx.fillStyle='#f0f0f0'; ctx.fillRect(sx+2,y+h*.34,w-4,h*.29);
-  ctx.fillStyle='rgba(0,0,0,0.07)'; ctx.fillRect(sx+w/2-1,y+h*.34,2,h*.29); // crease
-
-  // ── Arms / attack / tagging ───────────────────────────────────────────────
-  if(tagging){
-    // Board vertical in front, leaning on ground
-    const vbX=dir>0 ? sx+w+3 : sx-17;
-    const vbY=y+h*.2, vbW=13, vbH=h*.8;
-    ctx.fillStyle='#c0392b'; ctx.fillRect(vbX,vbY,vbW,vbH);
-    ctx.fillStyle='#922b21';
-    ctx.fillRect(vbX,vbY,vbW,5); ctx.fillRect(vbX,vbY+vbH-5,vbW,5); // nose/tail
-    ctx.fillStyle='rgba(0,0,0,0.22)'; ctx.fillRect(vbX+2,vbY+7,vbW-4,vbH-14); // grip
-    // side wheels
-    const wX=dir>0 ? vbX-5 : vbX+vbW+5;
-    ctx.fillStyle='#1a1a1a';
-    ctx.beginPath(); ctx.arc(wX,vbY+10,  6,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(wX,vbY+vbH-10,6,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#555';
-    ctx.beginPath(); ctx.arc(wX,vbY+10,  2,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(wX,vbY+vbH-10,2,0,Math.PI*2); ctx.fill();
-    // arm holding board
-    ctx.fillStyle='#f5cba7';
-    if(dir>0){ ctx.fillRect(sx+w-3,y+h*.4,11,16); }
-    else      { ctx.fillRect(sx-8,  y+h*.4,11,16); }
-    // other arm: spray can
-    ctx.fillStyle='#f5cba7';
-    if(dir>0){ ctx.fillRect(sx-4,y+h*.38,9,20); _drawSprayCan(sx-20,y+h*.30,-1); }
-    else      { ctx.fillRect(sx+w-5,y+h*.38,9,20); _drawSprayCan(sx+w+6,y+h*.30,1); }
-  } else if(atkTimer>0){
-    ctx.fillStyle='#f5cba7';
-    const ax=dir>0?sx+w-2:sx-18; ctx.fillRect(ax,y+h*.36,20,9);
+  _shadow(sx+w/2,19);
+  ctx.fillStyle='#1c2b3a';
+  const lo=state==='run'?Math.sin(Date.now()*.016)*5:0;
+  ctx.fillRect(sx+4,   y+h*.61-lo,11,h*.39+lo);
+  ctx.fillRect(sx+w-15,y+h*.61+lo,11,Math.max(4,h*.39-lo));
+  ctx.fillStyle='#c0392b';ctx.fillRect(sx+2,y+h-8,14,8);ctx.fillRect(sx+w-16,y+h-8,14,8);
+  ctx.fillStyle='#e74c3c';ctx.fillRect(sx+2,y+h*.34,w-4,h*.29);
+  ctx.fillStyle='#c0392b';ctx.fillRect(sx+w/2-7,y+h*.52,14,10);
+  ctx.fillStyle='#e74c3c';
+  if(atkTimer>0){
+    const ax=dir>0?sx+w-2:sx-18;ctx.fillRect(ax,y+h*.36,20,9);
     _drawSprayCan(dir>0?sx+w+14:sx-28,y+h*.31,dir);
-  } else {
-    ctx.fillStyle='#f5cba7'; // short-sleeve arms (skin)
-    ctx.fillRect(sx-3,y+h*.36,8,20); ctx.fillRect(sx+w-5,y+h*.36,8,20);
-  }
-
-  // ── Head ──────────────────────────────────────────────────────────────────
-  const hx=sx+(w-24)/2, hy=y, hw=24, hh=Math.round(h*.32);
-  // face
-  ctx.fillStyle='#f5cba7'; ctx.fillRect(hx,hy+7,hw,hh-2);
-  // blonde hair peeking below/sides of helmet
+  } else {ctx.fillRect(sx-3,y+h*.36,8,20);ctx.fillRect(sx+w-5,y+h*.36,8,20);}
+  const hx=sx+(w-26)/2,hy=y,hw=26,hh=Math.round(h*.32);
+  ctx.fillStyle='#f5cba7';ctx.fillRect(hx,hy,hw,hh);
   ctx.fillStyle='#d4a820';
-  ctx.fillRect(hx-4,hy+11,5,hh-4);      // left
-  ctx.fillRect(hx+hw-1,hy+11,5,hh-4);   // right
-  ctx.fillRect(hx,hy+hh+3,hw,5);         // back/bottom strands
-
-  // white skater helmet (dome)
-  ctx.fillStyle='#efefef';
-  ctx.beginPath();
-  ctx.arc(hx+hw/2, hy+10, hw/2+5, Math.PI,0); ctx.fill();
-  ctx.fillRect(hx-5, hy+8, hw+10, 9); // lower band that wraps around
-  // helmet vents
-  ctx.strokeStyle='#d0d0d0'; ctx.lineWidth=1;
-  for(const vx of [hx+4, hx+hw/2-1, hx+hw-4]){
-    ctx.beginPath(); ctx.moveTo(vx,hy+3); ctx.lineTo(vx,hy+14); ctx.stroke();
-  }
-  // shine
-  ctx.fillStyle='rgba(255,255,255,0.52)';
-  ctx.beginPath(); ctx.ellipse(hx+hw/2-4,hy+5,5,3,-0.4,0,Math.PI*2); ctx.fill();
-  // chin strap
-  ctx.strokeStyle='#bbb'; ctx.lineWidth=1.5;
-  ctx.beginPath(); ctx.moveTo(hx+1,hy+15); ctx.lineTo(hx+4,hy+hh+2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(hx+hw-1,hy+15); ctx.lineTo(hx+hw-4,hy+hh+2); ctx.stroke();
-  ctx.fillStyle='#aaa'; ctx.fillRect(hx+hw/2-3,hy+hh+1,6,3); // buckle
-
-  // face features
+  ctx.fillRect(hx-3,hy-5,hw+6,9);ctx.fillRect(hx-4,hy,7,hh+15);ctx.fillRect(hx+hw-3,hy,7,hh+13);
+  ctx.fillRect(hx+2,hy,5,hh+17);ctx.fillRect(hx+hw-7,hy,5,hh+15);
+  ctx.fillStyle='#f0c83a';ctx.fillRect(hx-2,hy-3,3,hh+10);
   const eox=dir>0?3:-2;
-  ctx.fillStyle='#fff'; ctx.fillRect(hx+4+eox,hy+11,5,4); ctx.fillRect(hx+14+eox,hy+11,5,4);
-  ctx.fillStyle='#2c3e50'; ctx.fillRect(hx+5+eox,hy+12,3,3); ctx.fillRect(hx+15+eox,hy+12,3,3);
-  ctx.fillStyle='#c8a020'; ctx.fillRect(hx+3+eox,hy+10,7,2); ctx.fillRect(hx+13+eox,hy+10,7,2); // brows
-  ctx.fillStyle='#c0392b'; ctx.fillRect(hx+6+eox,hy+hh-4,10,2); // mouth
+  ctx.fillStyle='#fff';ctx.fillRect(hx+5+eox,hy+9,5,5);ctx.fillRect(hx+16+eox,hy+9,5,5);
+  ctx.fillStyle='#2c3e50';ctx.fillRect(hx+6+eox,hy+10,3,4);ctx.fillRect(hx+17+eox,hy+10,3,4);
+  ctx.fillStyle='#c8a020';ctx.fillRect(hx+4+eox,hy+7,7,2);ctx.fillRect(hx+15+eox,hy+7,7,2);
+  ctx.fillStyle='#c0392b';ctx.fillRect(hx+7+eox,hy+hh-7,12,3);
 }
 function _drawSprayCan(x,y,dir){
   ctx.fillStyle='#f1c40f';ctx.fillRect(x,y,12,20);
