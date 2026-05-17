@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adventures of Anthony</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+    <div id="hud">
+      <span id="walls-tagged">Walls: 0 / 5</span>
+      <span id="timer">0:00</span>
+      <span id="lives">♥ ♥ ♥</span>
+    </div>
+
+    <button id="lang-btn" title="Zmień język / Change language">🇵🇱 PL</button>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen">
+      <h1><span id="ui-title1">Adventures of</span><br><span id="ui-name" class="name">Anthony</span></h1>
+      <p class="sub" id="ui-subtitle">Tag 5 walls to own the city!</p>
+      <input id="player-name" type="text" maxlength="18" autocomplete="off" spellcheck="false" placeholder="Your name…">
+      <div class="controls" id="ui-controls"></div>
+      <button id="start-btn">PLAY</button>
+      <div id="lb-wrap">
+        <div class="lb-title" id="ui-lb-title">🏆 Best Times</div>
+        <div id="leaderboard"></div>
+      </div>
+    </div>
+
+    <!-- WIN SCREEN -->
+    <div id="win-screen" class="screen hidden">
+      <h1 id="ui-win-title">🎨 City Owned!</h1>
+      <p class="sub" id="ui-win-sub">Anthony tagged the whole block!</p>
+      <p id="win-time"></p>
+      <div id="lb-wrap-win">
+        <div class="lb-title" id="ui-lb-title-win">🏆 Best Times</div>
+        <div id="leaderboard-win"></div>
+      </div>
+      <button id="restart-btn">Play Again</button>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameover-screen" class="screen hidden">
+      <h1 id="ui-go-title">Game Over</h1>
+      <button id="retry-btn">Try Again</button>
+    </div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0d0d1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
+
+#game-container {
+  position: relative;
+  display: inline-block;
+  box-shadow: 0 0 40px rgba(231, 76, 60, 0.4);
+}
+
+#gameCanvas {
+  display: block;
+  border: 3px solid #e74c3c;
+  border-radius: 4px;
+}
+
+/* ── HUD ─────────────────────────────────────────────────────────── */
+#hud {
+  position: absolute;
+  top: 10px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 14px;
+  pointer-events: none;
+  color: #fff;
+  font-size: 15px;
+  font-weight: bold;
+  text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+}
+#timer { color: #2ecc71; letter-spacing: 1px; }
+
+/* ── Language button ─────────────────────────────────────────────── */
+#lang-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  z-index: 20;
+  transition: background 0.15s;
+}
+#lang-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ── Screens ─────────────────────────────────────────────────────── */
+.screen {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,20,0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  border-radius: 2px;
+}
+
+.screen h1 {
+  font-size: 44px;
+  color: #fff;
+  text-align: center;
+  line-height: 1.15;
+  text-shadow: 4px 4px 0 #c0392b;
+}
+.screen h1 .name { color: #f39c12; text-shadow: 4px 4px 0 #b7770d; }
+
+.sub {
+  font-size: 15px;
+  color: #bdc3c7;
+  font-weight: normal;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* ── Player name input ───────────────────────────────────────────── */
+#player-name {
+  padding: 9px 16px;
+  font-size: 17px;
+  font-family: Arial, sans-serif;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  text-align: center;
+  outline: none;
+  width: 230px;
+  transition: border-color 0.15s;
+}
+#player-name::placeholder { color: rgba(255,255,255,0.3); }
+#player-name:focus { border-color: #e74c3c; }
+
+/* ── Controls hint ───────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 14px;
+  background: rgba(255,255,255,0.06);
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #ecf0f1;
+  font-family: Arial, sans-serif;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Leaderboard ─────────────────────────────────────────────────── */
+#lb-wrap, #lb-wrap-win {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 200px;
+}
+.lb-title {
+  color: #f39c12;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+#leaderboard, #leaderboard-win {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+}
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  color: #ecf0f1;
+  background: rgba(255,255,255,0.05);
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+.lb-rank  { color: #f39c12; width: 18px; text-align: right; }
+.lb-name  { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-time  { color: #2ecc71; font-weight: bold; font-variant-numeric: tabular-nums; }
+.lb-empty { color: #7f8c8d; font-size: 12px; font-family: Arial; }
+.lb-you   { background: rgba(46,204,113,0.12); border: 1px solid rgba(46,204,113,0.3); }
+
+/* ── Win time ────────────────────────────────────────────────────── */
+#win-time { font-size: 26px; color: #2ecc71; font-weight: bold; font-family: Arial; }
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+button {
+  padding: 12px 38px;
+  font-size: 20px;
+  font-family: 'Arial Black', Arial, sans-serif;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 4px 0 #922b21;
+}
+button:hover  { background: #c0392b; transform: translateY(-2px); }
+button:active { transform: translateY(2px); box-shadow: 0 2px 0 #922b21; }
+
+.hidden { display: none !important; }
