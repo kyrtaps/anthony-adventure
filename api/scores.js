@@ -3,27 +3,45 @@
 // POST → upserts a score (best time per name), returns updated board
 //
 // Backed by Upstash Redis (Vercel Marketplace → Upstash → Redis).
-// Env vars injected automatically after connecting the store to this project:
+// Env vars injected automatically after connecting the store:
 //   UPSTASH_REDIS_REST_URL   and   UPSTASH_REDIS_REST_TOKEN
 
 const KEY = 'anthony_scores';
 
+// Send a single Redis command via Upstash REST pipeline format.
+// POST {base} with body ["COMMAND", "arg1", "arg2", ...]
+async function upstash(base, token, ...args) {
+  const r = await fetch(base, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(args),
+  });
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`Upstash ${args[0]} failed: ${r.status} ${text}`);
+  }
+  const j = await r.json();
+  if (j.error) throw new Error(`Upstash error: ${j.error}`);
+  return j.result;
+}
+
 async function kvGet(base, token) {
   try {
-    const r = await fetch(`${base}/get/${KEY}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const j = await r.json();
-    return j.result ? JSON.parse(j.result) : [];
+    const result = await upstash(base, token, 'GET', KEY);
+    if (!result) return [];
+    // result is the stored string — parse it, handling any legacy double-encoding
+    let val = result;
+    try { val = JSON.parse(val); } catch {}
+    if (typeof val === 'string') {
+      try { val = JSON.parse(val); } catch {}
+    }
+    return Array.isArray(val) ? val : [];
   } catch { return []; }
 }
 
 async function kvSet(base, token, value) {
-  await fetch(`${base}/set/${KEY}`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(JSON.stringify(value)),
-  });
+  // Store array as a JSON string so GET can always parse it back
+  await upstash(base, token, 'SET', KEY, JSON.stringify(value));
 }
 
 module.exports = async function handler(req, res) {
@@ -36,8 +54,8 @@ module.exports = async function handler(req, res) {
   const base  = process.env.UPSTASH_REDIS_REST_URL  || process.env.KV_REST_API_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 
-  // KV not configured (local dev without env vars) — return empty list
   if (!base || !token) {
+    // KV not configured — return empty list gracefully
     res.status(200).json([]);
     return;
   }
@@ -49,14 +67,18 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { name, time } = req.body || {};
+    // Ensure body is parsed (Vercel auto-parses application/json)
+    let body = req.body;
+    if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
+
+    const { name, time } = body || {};
     if (typeof name !== 'string' || typeof time !== 'number' || time <= 0) {
       res.status(400).json({ error: 'name (string) and time (positive ms number) required' });
       return;
     }
 
-    const n  = name.trim().slice(0, 18) || 'Anon';
-    let lb   = await kvGet(base, token);
+    const n = name.trim().slice(0, 18) || 'Anon';
+    const lb = await kvGet(base, token);
     const idx = lb.findIndex(e => e.name.toLowerCase() === n.toLowerCase());
 
     if (idx !== -1) {
@@ -66,7 +88,7 @@ module.exports = async function handler(req, res) {
     }
 
     lb.sort((a, b) => a.time - b.time);
-    lb.splice(10); // top 10 only
+    lb.splice(10);
     await kvSet(base, token, lb);
     res.status(200).json(lb);
     return;
